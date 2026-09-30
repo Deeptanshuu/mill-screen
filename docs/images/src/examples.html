@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;font-family:'Space Grotesk',sans-serif;color:#000;padding:20px}
+.fig{background:#fff;border:1px solid #D8DADD;padding:28px 32px 20px;margin-bottom:20px}
+.hd{display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:1.2px;
+ text-transform:uppercase;color:#6B6F76}
+.q{margin:8px 0 18px;font-size:21px;font-weight:500}
+.row{display:flex;align-items:center;gap:14px;height:26px;font-size:14px}
+.lab{width:104px;color:#333}
+.track{position:relative;flex:1;height:14px;border-bottom:1px solid #D8DADD}
+.track i{position:absolute;left:0;bottom:0;height:6px}
+.track b{position:absolute;top:0;bottom:-1px;width:1px;background:#000}
+.pct{width:40px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.note{margin-top:14px;font-size:11px;color:#6B6F76;text-align:right}
+</style></head><body>
+<div class="fig" id="demo-spanish" style="width:800px">
+  <div class="hd"><span>Spanish</span>
+   <span style="color:#E53935">toxic</span></div>
+  <div class="q">Eres un completo idiota y nadie te quiere.</div>
+  <div class="row"><span class="lab">Toxic</span><span class="track"><i style="width:98.7%;background:#E53935"></i><b style="left:47.2%"></b></span><span class="pct">98.7</span></div><div class="row"><span class="lab">Severe Toxic</span><span class="track"><i style="width:7.0%;background:#2E7D32"></i><b style="left:47.2%"></b></span><span class="pct">7.0</span></div><div class="row"><span class="lab">Obscene</span><span class="track"><i style="width:84.1%;background:#E53935"></i><b style="left:52.8%"></b></span><span class="pct">84.1</span></div><div class="row"><span class="lab">Threat</span><span class="track"><i style="width:2.7%;background:#2E7D32"></i><b style="left:52.8%"></b></span><span class="pct">2.7</span></div><div class="row"><span class="lab">Insult</span><span class="track"><i style="width:99.3%;background:#E53935"></i><b style="left:56.4%"></b></span><span class="pct">99.3</span></div><div class="row"><span class="lab">Identity Hate</span><span class="track"><i style="width:5.0%;background:#2E7D32"></i><b style="left:56.4%"></b></span><span class="pct">5.0</span></div>
+  <div class="note">probability, % &nbsp;&middot;&nbsp; tick marks the label's threshold</div>
+</div>
+<div class="fig" id="demo-threat" style="width:560px">
+  <div class="hd"><span>English</span>
+   <span style="color:#E53935">toxic</span></div>
+  <div class="q">I know where you live and I will find you.</div>
+  <div class="row"><span class="lab">Toxic</span><span class="track"><i style="width:17.7%;background:#2E7D32"></i><b style="left:47.2%"></b></span><span class="pct">17.7</span></div><div class="row"><span class="lab">Severe Toxic</span><span class="track"><i style="width:1.7%;background:#2E7D32"></i><b style="left:47.2%"></b></span><span class="pct">1.7</span></div><div class="row"><span class="lab">Obscene</span><span class="track"><i style="width:0.7%;background:#2E7D32"></i><b style="left:52.8%"></b></span><span class="pct">0.7</span></div><div class="row"><span class="lab">Threat</span><span class="track"><i style="width:58.8%;background:#E53935"></i><b style="left:52.8%"></b></span><span class="pct">58.8</span></div><div class="row"><span class="lab">Insult</span><span class="track"><i style="width:0.6%;background:#2E7D32"></i><b style="left:56.4%"></b></span><span class="pct">0.3</span></div><div class="row"><span class="lab">Identity Hate</span><span class="track"><i style="width:2.5%;background:#2E7D32"></i><b style="left:56.4%"></b></span><span class="pct">2.5</span></div>
+  <div class="note">probability, % &nbsp;&middot;&nbsp; tick marks the label's threshold</div>
+</div>
+<div class="fig" id="demo-clean" style="width:560px">
+  <div class="hd"><span>English</span>
+   <span style="color:#2E7D32">non-toxic</span></div>
+  <div class="q">Thanks for the fix, works on my machine now.</div>
+  <div class="row"><span class="lab">Toxic</span><span class="track"><i style="width:0.6%;background:#2E7D32"></i><b style="left:47.2%"></b></span><span class="pct">0.6</span></div><div class="row"><span class="lab">Severe Toxic</span><span class="track"><i style="width:3.3%;background:#2E7D32"></i><b style="left:47.2%"></b></span><span class="pct">3.3</span></div><div class="row"><span class="lab">Obscene</span><span class="track"><i style="width:0.8%;background:#2E7D32"></i><b style="left:52.8%"></b></span><span class="pct">0.8</span></div><div class="row"><span class="lab">Threat</span><span class="track"><i style="width:5.7%;background:#2E7D32"></i><b style="left:52.8%"></b></span><span class="pct">5.7</span></div><div class="row"><span class="lab">Insult</span><span class="track"><i style="width:1.1%;background:#2E7D32"></i><b style="left:56.4%"></b></span><span class="pct">1.1</span></div><div class="row"><span class="lab">Identity Hate</span><span class="track"><i style="width:3.5%;background:#2E7D32"></i><b style="left:56.4%"></b></span><span class="pct">3.5</span></div>
+  <div class="note">probability, % &nbsp;&middot;&nbsp; tick marks the label's threshold</div>
+</div>
+</body></html>

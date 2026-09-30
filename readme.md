@@ -22,26 +22,27 @@ tuned on the validation split. It covers English, Russian, Turkish, Spanish, Fre
 Portuguese, on XLM-RoBERTa-large with a language-conditioned attention block on top.
 
 **A demo to try it in.** `streamlit_app.py` detects the language, scores the comment and shows
-every label against its threshold:
+every label against its threshold. Three comments, as the model scores them:
 
-<img src="docs/images/demo-spanish.png" alt="The Streamlit demo scoring 'Eres un completo idiota y nadie te quiere.': detected as Spanish, labelled TOXIC with Toxic, Obscene and Insult, insult at 99.3%, toxic 98.7%, obscene 84.1%, and timing of 0.49 s on CPU" width="100%">
+<img src="docs/images/demo-spanish.png" alt="'Eres un completo idiota y nadie te quiere.', Spanish, toxic: insult 99.3%, toxic 98.7% and obscene 84.1% are over their thresholds; severe toxic 7.0%, identity hate 5.0% and threat 2.7% are under" width="100%">
 
 <table>
 <tr>
 <td width="50%" valign="top">
-<img src="docs/images/demo-threat.png" alt="'I know where you live and I will find you.' labelled TOXIC with only Threat firing, at 58.8%, toxic at 17.7%" width="100%">
+<img src="docs/images/demo-threat.png" alt="'I know where you live and I will find you.', English, toxic: only threat is over its threshold, at 58.8%; toxic is at 17.7%" width="100%">
 </td>
 <td width="50%" valign="top">
-<img src="docs/images/demo-clean.png" alt="'I disagree with your opinion, but I appreciate your perspective.' labelled NON-TOXIC, every label under 16%" width="100%">
+<img src="docs/images/demo-clean.png" alt="'Thanks for the fix, works on my machine now.', English, non-toxic: every label under 6%" width="100%">
 </td>
 </tr>
 <tr>
 <td valign="top"><sub>A threat with no insult or swearing in it: only <code>threat</code> fires.</sub></td>
-<td valign="top"><sub>Disagreement without abuse: every label stays under its threshold.</sub></td>
+<td valign="top"><sub>An ordinary reply: every label stays far under its threshold.</sub></td>
 </tr>
 </table>
 
-All three screenshots are the v2 checkpoint running on CPU.
+The numbers are the v2 checkpoint's output, recorded in
+[`docs/images/src/predictions.jsonl`](docs/images/src/predictions.jsonl).
 
 ## Use it from Python
 

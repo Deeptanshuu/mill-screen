@@ -238,41 +238,44 @@ NAMES = {
     "textdetox_xlmr_large": "textdetox XLM-R large",
     "citizenlab_mdistilbert": "citizenlab mDistilBERT",
 }
-MILL_BLUE, BASE_GREY = "#2a78d6", "#b9b8b3"
-INK, INK2, GRID, SURFACE = "#0b0b0b", "#52514e", "#e4e3df", "#ffffff"
+# Same look as the README banner: black for Mill, grey for the rest, hairlines, Space Grotesk
+# when it is installed (falls back to the matplotlib default).
+MILL_INK, BASE_GREY = "#000000", "#C9CBCF"
+INK, INK2, GRID, SURFACE = "#000000", "#6B6F76", "#D8DADD", "#ffffff"
 
 
 def _bars(values, title, xlabel, fmt, note, name):
-    """One horizontal bar per model, Mill in blue, value printed at the bar end."""
+    """One thin horizontal bar per model, Mill in black, value printed at the bar end."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
+    plt.rcParams["font.family"] = ["Space Grotesk", "DejaVu Sans"]
     keys = list(NAMES)
     y = np.arange(len(keys))[::-1]
-    fig, ax = plt.subplots(figsize=(8, 3.2))
+    fig, ax = plt.subplots(figsize=(8, 3.4))
     fig.patch.set_facecolor(SURFACE)
     ax.set_facecolor(SURFACE)
-    colors = [MILL_BLUE if k == "mill" else BASE_GREY for k in keys]
-    ax.barh(y, [values[k] for k in keys], height=0.6, color=colors)
+    colors = [MILL_INK if k == "mill" else BASE_GREY for k in keys]
+    ax.barh(y, [values[k] for k in keys], height=0.22, color=colors)
     top = max(values.values())
     for yv, k in zip(y, keys, strict=True):
-        ax.text(values[k] + top * 0.015, yv, fmt(values[k]), va="center", fontsize=11,
+        ax.text(values[k] + top * 0.015, yv, fmt(values[k]), va="center", fontsize=12,
                 color=INK, fontweight="bold" if k == "mill" else "normal")
-    ax.set_yticks(y, [NAMES[k] for k in keys], fontsize=11, color=INK)
+    ax.set_yticks(y, [NAMES[k] for k in keys], fontsize=12, color=INK)
     for lbl, k in zip(ax.get_yticklabels(), keys, strict=True):
         lbl.set_fontweight("bold" if k == "mill" else "normal")
-    ax.set_xlim(0, top * 1.2)
-    ax.set_title(title, loc="left", fontsize=13, color=INK, pad=12)
-    ax.set_xlabel(xlabel, fontsize=10, color=INK2)
+    ax.set_xlim(0, top * 1.15)
+    ax.set_ylim(-0.6, len(keys) - 0.4)
+    ax.set_title(title, loc="left", fontsize=15, fontweight="bold", color=INK, pad=14)
+    ax.set_xlabel(xlabel, fontsize=10.5, color=INK2, loc="left", labelpad=8)
     for side in ("top", "right", "left"):
         ax.spines[side].set_visible(False)
     ax.spines["bottom"].set_color(GRID)
-    ax.tick_params(axis="y", length=0)
-    ax.tick_params(axis="x", colors=INK2, labelsize=9)
-    ax.grid(axis="x", color=GRID, linewidth=0.8)
-    ax.set_axisbelow(True)
-    fig.text(0.01, -0.1, note, fontsize=8.5, color=INK2)
+    ax.tick_params(axis="y", length=0, pad=10)
+    ax.tick_params(axis="x", colors=INK2, labelsize=10, length=0)
+    ax.grid(False)
+    fig.text(0.01, -0.14, note, fontsize=9.5, color=INK2)
     for d in (Path("docs/images"), Path("hf_release/images")):
         fig.savefig(d / name, dpi=200, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
