@@ -1,209 +1,214 @@
-"""Build architecture.html: the model, stage by stage, in the banner's style.
+"""Build architecture.html: a block diagram of the model, bottom to top.
 
-Shapes and layer lists follow model/language_aware_transformer.py (forward,
-lines 187-290). The output bars are the Spanish row of predictions.jsonl, so
-they are real model output. The attention grid and bias strip are schematic.
-Screenshot the #arch element at deviceScaleFactor 2 to get ../architecture.png.
+Layer names and shapes follow model/language_aware_transformer.py (__init__ at
+62-112, forward at 187-290). The output bars are the Spanish row of
+predictions.jsonl, so they are real model output; the small score grids are
+schematic. Screenshot the #arch element at deviceScaleFactor 2 to get
+../architecture.png.
 """
 
 import json
 import math
 import pathlib
 
-from build_banner import CUT, LABELS, NON_TOXIC, SHIELD, TOXIC
+from build_banner import CUT, LABELS, NON_TOXIC, TOXIC
 
 HERE = pathlib.Path(__file__).parent
 rows = [json.loads(line) for line in open(HERE / "predictions.jsonl", encoding="utf-8")]
 es = next(r for r in rows if r["lang"] == "es")
-N = 8  # tokens drawn
+
+INK, MUTED, LINE = "#000000", "#6B6F76", "#B4B7BD"
+PLAIN = ("#FAFAF8", "#B4B7BD")
+ATTN = ("#FFF4CC", "#D2AE3A")
+LANG = ("#FDE7E6", TOXIC)
+HEAD = ("#E3F0E4", NON_TOXIC)
+FROZEN = ("url(#hatch)", "#8E9299")
+out = []
 
 
-def grey(v):
-    c = round(255 - v * 215)
-    return f"rgb({c},{c},{c})"
+def rect(x, y, w, h, fill, stroke, dash=False, r=5, sw=1.4):
+    d = ' stroke-dasharray="2 4" stroke-linecap="round"' if dash else ""
+    out.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"{d}/>')
 
 
-def red(v):
-    return f"rgba(229,57,53,{0.12 + v * 0.88:.2f})"
+def text(x, y, s, size=15, weight=500, fill=INK, anchor="middle", cls="", style=""):
+    out.append(f'<text x="{x}" y="{y}" font-size="{size}" font-weight="{weight}" fill="{fill}" '
+               f'text-anchor="{anchor}" class="{cls}" style="{style}">{s}</text>')
 
 
-# Schematic values: a smooth content pattern and one per-key language offset.
-content = [[0.5 + 0.5 * math.sin(1.7 * i + 0.9 * j) * math.cos(0.6 * i - 1.3 * j) for j in range(N)] for i in range(N)]
-bias = [0.15, 0.9, 0.35, 0.7, 0.05, 1.0, 0.5, 0.25]
+def box(cx, y, w, h, title, sub=None, kind=PLAIN, stack=0, mono=False):
+    """A block centred on cx. stack > 0 draws offset copies behind it for depth."""
+    x = cx - w / 2
+    for n in range(stack, 0, -1):
+        rect(x + 7 * n, y - 7 * n, w, h, "#FFFFFF" if kind is FROZEN else kind[0], kind[1])
+    if kind is FROZEN:
+        rect(x, y, w, h, "#FFFFFF", kind[1])
+    rect(x, y, w, h, kind[0], kind[1])
+    if sub:
+        text(cx, y + h / 2 - 3, title, cls="m" if mono else "")
+        text(cx, y + h / 2 + 15, sub, size=11.5, weight=400, fill=MUTED, cls="m")
+    else:
+        text(cx, y + h / 2 + 5, title, cls="m" if mono else "")
 
-grid = "".join(f'<i style="background:{grey(v)}"></i>' for row in content for v in row)
-strip = "".join(f'<i style="background:{red(v)}"></i>' for v in bias)
-tokens = '<i class="cls"></i>' + "<i></i>" * (N - 1)
-layers = "".join(f'<i{" class=frozen" if n == 0 else ""}></i>' for n in range(25))
+
+def line(pts, color="#333", arrow=True, sw=1.6):
+    d = "M" + " L".join(f"{x},{y}" for x, y in pts)
+    m = f' marker-end="url(#a{"r" if color == TOXIC else "k"})"' if arrow else ""
+    out.append(f'<path d="{d}" fill="none" stroke="{color}" stroke-width="{sw}" stroke-linejoin="round"{m}/>')
 
 
-def mini(vals):
-    return '<span class="mini">' + "".join(f'<i style="background:{red(v)}"></i>' for r in vals for v in r) + "</span>"
+def tag(x, y, s, anchor="start", fill=MUTED, size=12):
+    text(x, y, s, size=size, weight=400, fill=fill, anchor=anchor, cls="m")
 
 
-cancel = mini([[0.7] * 4, [0.2] * 4, [1.0] * 4])
-survive = mini([[0.7, 0.2, 1.0, 0.4]] * 3)
+def grid(x, y, n, cell, vals, color):
+    for i in range(n):
+        for j in range(len(vals[i])):
+            v = vals[i][j]
+            f = f"rgba(229,57,53,{0.15 + 0.85 * v:.2f})" if color == "red" else f"rgb({round(250 - v * 200)},{round(245 - v * 205)},{round(225 - v * 215)})"
+            out.append(f'<rect x="{x + j * cell}" y="{y + i * cell}" width="{cell - 1.5}" height="{cell - 1.5}" fill="{f}"/>')
 
-bars = "".join(
-    f'<div class="row"><span class="lab">{name}</span><span class="track">'
-    f'<i style="width:{max(es["p"][k] * 100, 0.8):.1f}%;background:{TOXIC if es["p"][k] >= CUT[k] else NON_TOXIC}"></i>'
-    f'<b style="left:{CUT[k] * 100:.1f}%"></b></span><span class="pct">{es["p"][k] * 100:.1f}</span></div>'
-    for k, name in LABELS)
 
+content = [[0.5 + 0.5 * math.sin(1.7 * i + 0.9 * j) * math.cos(0.6 * i - 1.3 * j) for j in range(5)] for i in range(5)]
+
+# ---------------------------------------------------------------- header
+text(40, 62, "Mill, one forward pass", size=30, weight=700, anchor="start", style="letter-spacing:-.5px")
+tag(40, 90, "B batch  ·  S tokens  ·  16 heads of 64 dims  ·  565M parameters", size=13)
+for i, (kind, name) in enumerate([(PLAIN, "layer, trained"), (FROZEN, "frozen"), (ATTN, "attention scores"),
+                                  (LANG, "language path"), (HEAD, "classifier")]):
+    rect(40, 122 + i * 26, 22, 15, kind[0], kind[1], r=3, sw=1.2)
+    text(72, 134 + i * 26, name, size=13, weight=400, anchor="start", fill="#333")
+
+# ---------------------------------------------------------------- encoder panel
+LX = 370
+rect(170, 350, 400, 440, "#F4F4F1", "#D8DADD", r=10, sw=1.2)
+text(552, 378, "XLM-RoBERTa-large", size=14, weight=700, anchor="end", fill="#333")
+for n in (2, 1):
+    rect(232 + 6 * n, 404 - 6 * n, 276, 272, "none", "#9A9DA3", dash=True, r=8)
+rect(232, 404, 276, 272, "#F4F4F1", "#6B6F76", dash=True, r=8)
+text(540, 548, "×24", size=17, weight=600, anchor="middle")
+box(LX, 614, 220, 44, "Multi-head self-attention", "16 heads")
+box(LX, 558, 220, 34, "Add &amp; LayerNorm")
+box(LX, 486, 220, 48, "Feed-forward", "1024 → 4096 → 1024")
+box(LX, 428, 220, 34, "Add &amp; LayerNorm")
+box(LX, 716, 220, 50, "Embedding", "frozen · 256M parameters", kind=FROZEN, stack=2)
+box(LX, 276, 220, 44, "Enc. hidden states", stack=3)
+box(LX, 830, 220, 40, "input_ids", mono=True)
+box(95, 830, 150, 40, "attention_mask", mono=True)
+box(LX, 900, 300, 40, "XLM-R SentencePiece tokenizer")
+text(LX, 972, "“Eres un completo idiota y nadie te quiere.”", size=14, weight=500, fill="#333")
+line([(LX, 955), (LX, 942)])
+line([(LX, 900), (LX, 872)])
+line([(220, 920), (95, 920), (95, 872)])
+line([(LX, 830), (LX, 768)])
+tag(LX + 10, 806, "[B,S]")
+line([(LX, 709), (LX, 678)])
+line([(LX, 614), (LX, 594)])
+line([(LX, 558), (LX, 536)])
+line([(LX, 486), (LX, 464)])
+line([(LX, 428), (LX, 322)])
+line([(95, 830), (95, 636), (258, 636)])
+tag(105, 628, "[B,S]")
+
+# ---------------------------------------------------------------- head panel
+RX = 1010
+rect(790, 112, 640, 678, "#F4F4F1", "#D8DADD", r=10, sw=1.2)
+text(1412, 140, "Language-aware head", size=14, weight=700, anchor="end", fill="#333")
+
+# hidden states travel from the encoder into the head
+line([(501, 291), (700, 291), (700, 812), (RX, 812), (RX, 768)])
+tag(710, 520, "[B,S,1024]")
+
+box(RX, 716, 250, 50, "q, k, v projections", "3 × Linear 1024 → 1024", stack=2)
+line([(RX, 709), (RX, 690)])
+
+# content scores, drawn as a stack of per-head matrices
+rect(RX - 125, 618, 250, 70, *ATTN)
+for n in (2, 1, 0):
+    rect(RX - 110 + 6 * n - 2, 628 - 5 * n - 2 + 6, 49, 49, "#FFFFFF", ATTN[1], r=2, sw=1)
+    grid(RX - 110 + 6 * n, 634 - 5 * n, 5, 9, content, "grey")
+text(RX + 34, 648, "content scores")
+text(RX + 34, 667, "q·kᵀ / √64   [B,16,S,S]", size=11.5, weight=400, fill=MUTED, cls="m")
+line([(RX, 618), (RX, 592)])
+
+# the sum node
+out.append(f'<circle cx="{RX}" cy="577" r="14" fill="#fff" stroke="{TOXIC}" stroke-width="1.6"/>')
+text(RX, 584, "+", size=20, weight=600, fill=TOXIC)
+line([(RX, 563), (RX, 538)])
+
+box(RX, 494, 250, 42, "Mask padded keys to −∞")
+line([(RX, 494), (RX, 476)])
+box(RX, 430, 250, 44, "Softmax over keys", "then dropout", kind=ATTN)
+line([(RX, 430), (RX, 412)])
+box(RX, 366, 250, 44, "Weights · v, merge heads")
+line([(RX, 366), (RX, 348)])
+box(RX, 296, 250, 50, "post_attention", "Linear · LayerNorm · GELU", mono=True)
+line([(RX, 296), (RX, 278)])
+tag(RX + 10, 290, "[B,S,1024]")
+
+# keep row 0
+rect(RX - 125, 232, 250, 44, *PLAIN)
+for j in range(7):
+    out.append(f'<rect x="{RX - 110 + j * 13}" y="246" width="10" height="16" fill="{INK if j == 0 else "#fff"}" stroke="{INK}" stroke-width="1"/>')
+text(RX + 52, 259, "keep the [CLS] row")
+line([(RX, 232), (RX, 214)])
+tag(RX + 10, 226, "[B,1024]")
+box(RX, 162, 250, 50, "classifier", "1024 → 512 → 6", kind=HEAD, mono=True)
+line([(RX, 162), (RX, 92)])
+tag(RX + 10, 132, "6 logits  [B,6]")
+
+# v skips the scores and rejoins at the weighted sum
+line([(RX - 125, 741), (RX - 165, 741), (RX - 165, 388), (RX - 127, 388)])
+tag(RX - 173, 560, "v", anchor="end")
+
+# ---------------------------------------------------------------- language branch
+GX = 1300
+rect(1178, 540, 236, 240, "none", TOXIC, dash=True, r=8)
+text(1404, 532, "language conditioning", size=12, weight=600, anchor="end", fill=TOXIC)
+box(GX, 716, 200, 50, "lang_embed", "Embedding(7, 64)", kind=LANG, mono=True)
+box(GX, 640, 200, 50, "lang_proj", "Linear 64 → 1024, Tanh", kind=LANG, mono=True)
+rect(1192, 554, 210, 46, *LANG)
+grid(1204, 571, 1, 12, [[0.15, 0.9, 0.35, 0.7, 0.05]], "red")
+text(1336, 573, "language bias")
+text(1336, 591, "L·kᵀ / √64", size=11.5, weight=400, fill=MUTED, cls="m")
+box(GX, 830, 200, 40, "lang_ids", mono=True, kind=LANG)
+tag(GX, 890, "en 0 · ru 1 · tr 2 · es 3 · fr 4 · it 5 · pt 6", anchor="middle", size=11.5)
+line([(GX, 830), (GX, 768)], color=TOXIC)
+tag(GX + 10, 806, "[B]")
+line([(GX, 716), (GX, 692)], color=TOXIC)
+line([(GX, 640), (GX, 602)], color=TOXIC)
+tag(GX + 10, 626, "L [B,16,1,64]")
+line([(1192, 577), (RX + 16, 577)], color=TOXIC)
+tag(1108, 568, "[B,16,1,S]", anchor="middle")
+# k also feeds the bias
+line([(RX + 125, 741), (1162, 741), (1162, 590), (1190, 590)])
+tag(1154, 668, "k", anchor="end")
+
+# ---------------------------------------------------------------- output
+box(RX, 46, 250, 44, "6 independent sigmoids", kind=HEAD, stack=3)
+line([(RX + 146, 54), (1206, 54)])
+bx, by = 1216, 14
+for i, (k, name) in enumerate(LABELS):
+    p, y = es["p"][k], by + i * 15
+    text(bx, y + 10, name, size=11.5, weight=400, anchor="start", fill="#333")
+    out.append(f'<line x1="{bx + 92}" y1="{y + 11}" x2="{bx + 232}" y2="{y + 11}" stroke="#D8DADD"/>')
+    out.append(f'<rect x="{bx + 92}" y="{y + 6}" width="{max(p * 140, 1.5):.1f}" height="5" fill="{TOXIC if p >= CUT[k] else NON_TOXIC}"/>')
+    out.append(f'<line x1="{bx + 92 + CUT[k] * 140:.1f}" y1="{y + 1}" x2="{bx + 92 + CUT[k] * 140:.1f}" y2="{y + 12}" stroke="#000"/>')
+    text(bx + 272, y + 10, f"{p * 100:.1f}", size=11.5, weight=600, anchor="end")
+
+svg = "\n".join(out)
 page = f"""<!doctype html><html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
-<style>
-*{{box-sizing:border-box;margin:0;padding:0}}
-body{{background:#fff;font-family:'Space Grotesk',sans-serif;color:#000;padding:20px;width:1640px}}
-#arch{{width:1600px;border:1px solid #D8DADD;padding:36px 40px 32px;background:#fff}}
-.top{{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px}}
-.top h1{{display:flex;align-items:center;gap:10px;font-size:30px;letter-spacing:-.5px}}
-.top span{{font-size:13px;color:#6B6F76}}
-.flow{{display:flex;align-items:stretch}}
-.st{{border-top:2px solid #000;padding-top:12px;flex:none}}
-.st.lang{{border-top-color:{TOXIC}}}
-.ar{{flex:none;width:28px;display:flex;align-items:center;justify-content:center;color:#6B6F76;font-size:18px}}
-.k{{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#6B6F76}}
-.k b{{color:#000;margin-right:8px}}
-h2{{font-size:19px;font-weight:600;margin:6px 0 12px;line-height:1.2}}
-.d{{font-size:13px;line-height:1.5;color:#333}}
-code{{font-family:'Space Mono',monospace;font-size:12px}}
-.sh{{font-family:'Space Mono',monospace;font-size:12px;color:#6B6F76;white-space:nowrap}}
-.li{{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid #D8DADD;font-size:13px}}
-.li:last-child{{border-bottom:0}}
-.li code{{font-weight:700}}
-.q{{font-size:14px;font-weight:500;margin-bottom:10px}}
-.tok{{display:flex;gap:3px;margin:6px 0 4px}}
-.tok i{{width:16px;height:16px;border:1px solid #000}}
-.tok i.cls{{background:#000}}
-.stack{{display:flex;flex-direction:column-reverse;gap:3px;margin:4px 0 10px}}
-.stack i{{height:4px;background:#000}}
-.stack i.frozen{{height:10px;background:repeating-linear-gradient(135deg,#9A9DA3 0 2px,#fff 2px 5px);border:1px solid #9A9DA3}}
-.core{{display:grid;grid-template-columns:236px 174px 1fr;column-gap:22px}}
-.sub{{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}}
-.eq{{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:4px}}
-.red{{color:{TOXIC}}}
-.grid{{display:grid;grid-template-columns:repeat({N},20px);gap:2px}}
-.grid i{{height:20px}}
-.axis{{font-size:11px;color:#6B6F76;margin:2px 0 4px}}
-.plus{{font-size:20px;font-weight:500;margin:6px 0 2px 80px}}
-.steps{{counter-reset:s}}
-.steps div{{counter-increment:s;padding:7px 0 7px 26px;border-bottom:1px solid #D8DADD;font-size:13px;position:relative;line-height:1.35}}
-.steps div:before{{content:counter(s);position:absolute;left:0;font-family:'Space Mono',monospace;font-size:12px;color:#6B6F76}}
-.steps div:last-child{{border-bottom:0}}
-.row{{display:flex;align-items:center;gap:10px;height:24px;font-size:13px}}
-.lab{{width:88px;color:#333}}
-.track{{position:relative;flex:1;height:14px;border-bottom:1px solid #D8DADD}}
-.track i{{position:absolute;left:0;bottom:0;height:6px}}
-.track b{{position:absolute;top:0;bottom:-1px;width:1px;background:#000}}
-.pct{{width:34px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}}
-.foot{{display:grid;grid-template-columns:1.25fr 1fr 1fr;column-gap:44px;margin-top:30px;padding-top:20px;border-top:1px solid #D8DADD}}
-.foot h3{{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#6B6F76;margin-bottom:10px}}
-.pair{{display:flex;gap:26px}}
-.pair div{{font-size:12.5px;line-height:1.45;color:#333;width:50%}}
-.mini{{display:grid;grid-template-columns:repeat(4,22px);gap:2px;margin-bottom:8px}}
-.mini i{{height:14px}}
-.x{{opacity:.35}}
-</style></head><body><div id="arch">
-
-<div class="top"><h1>{SHIELD.format(s=28)}Mill, one forward pass</h1>
-<span><code>B</code> batch &nbsp;&middot;&nbsp; <code>S</code> tokens &nbsp;&middot;&nbsp; 16 heads of 64 dims &nbsp;&middot;&nbsp; 565M parameters</span></div>
-
-<div class="flow">
-
-<div class="st" style="width:192px">
- <div class="k"><b>01</b>Input</div><h2>A comment and its language</h2>
- <div class="q">Eres un completo idiota y nadie te quiere.</div>
- <div class="d">XLM-R SentencePiece tokens, at most 512. The black square is position 0, <code>[CLS]</code>.</div>
- <div class="tok">{tokens}</div>
- <div class="li"><code>input_ids</code><span class="sh">[B,S]</span></div>
- <div class="li"><code>attention_mask</code><span class="sh">[B,S]</span></div>
- <div class="li"><code class="red">lang_ids</code><span class="sh">[B] &nbsp;es = 3</span></div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st" style="width:168px">
- <div class="k"><b>02</b>Encoder</div><h2>XLM-RoBERTa-large</h2>
- <div class="stack">{layers}</div>
- <div class="d">24 transformer layers, all trained. The embedding table (hatched, 256M parameters) is frozen.</div>
- <div class="li" style="margin-top:8px"><span>output</span><span class="sh">[B,S,1024]</span></div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st lang" style="flex:1;min-width:0">
- <div class="k"><b>03</b>Language-conditioned attention</div><h2>One extra attention block, with a per-language bias on the scores</h2>
- <div class="core">
-  <div>
-   <div class="sub">Content</div>
-   <div class="li"><code>q_proj</code><span class="sh">1024&rarr;1024</span></div>
-   <div class="li"><code>k_proj</code><span class="sh">1024&rarr;1024</span></div>
-   <div class="li"><code>v_proj</code><span class="sh">1024&rarr;1024</span></div>
-   <div class="li"><span>split into heads</span><span class="sh">[B,16,S,64]</span></div>
-   <div class="sub red" style="margin-top:22px">Language</div>
-   <div class="li"><code class="red">lang_embed</code><span class="sh">Embedding(7, 64)</span></div>
-   <div class="li"><code class="red">lang_proj</code><span class="sh">64&rarr;1024</span></div>
-   <div class="li"><span>LayerNorm, Tanh</span><span class="sh">L [B,16,1,64]</span></div>
-  </div>
-  <div>
-   <div class="eq">q &middot; k<sup>T</sup> / &radic;64</div>
-   <div class="axis">keys &rarr; &nbsp; queries &darr;</div>
-   <div class="grid">{grid}</div>
-   <div class="sh" style="margin-top:5px">[B,16,S,S]</div>
-   <div class="plus">+</div>
-   <div class="eq red">L &middot; k<sup>T</sup> / &radic;64</div>
-   <div class="grid">{strip}</div>
-   <div class="sh" style="margin-top:5px">[B,16,1,S]</div>
-   <div class="d" style="margin-top:4px;font-size:12px">One value per key, added to every query row.</div>
-  </div>
-  <div class="steps">
-   <div>Mask padded keys to &minus;&infin;</div>
-   <div>Softmax along the key axis</div>
-   <div>Dropout on the weights</div>
-   <div>Weights &middot; <code>v</code>, merge heads</div>
-   <div>Linear, LayerNorm, GELU</div>
-   <div><span class="sh">[B,S,1024]</span></div>
-  </div>
- </div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st" style="width:176px">
- <div class="k"><b>04</b>Head</div><h2>Classifier on the <code style="font-size:16px">[CLS]</code> row</h2>
- <div class="tok">{tokens}</div>
- <div class="li"><span>row 0</span><span class="sh">[B,1024]</span></div>
- <div class="li"><span>Linear</span><span class="sh">1024&rarr;512</span></div>
- <div class="li"><span>LayerNorm, GELU</span><span class="sh">[B,512]</span></div>
- <div class="li"><span>Linear</span><span class="sh">512&rarr;6</span></div>
- <div class="li"><span>6 sigmoids</span><span class="sh">[B,6]</span></div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st" style="width:222px">
- <div class="k"><b>05</b>Output</div><h2>Six independent probabilities</h2>
- {bars}
- <div class="d" style="margin-top:10px;font-size:12px">No softmax across labels, so several can fire. A label fires when its probability reaches its own threshold (the tick), tuned on <code>val</code>.</div>
-</div>
-
-</div>
-
-<div class="foot">
- <div><h3>Why the bias runs along the keys</h3>
-  <div class="pair">
-   <div class="x">{cancel}Constant along each row of keys. Softmax is shift-invariant, so it cancels exactly. This was the 2025 bug.</div>
-   <div>{survive}Different for every key: <code>L&middot;k_j</code>. It survives softmax and reshapes what every query attends to.</div>
-  </div></div>
- <div><h3>Training</h3>
-  <div class="li"><span>Loss</span><span class="sh">weighted focal, per class</span></div>
-  <div class="li"><span>Frozen</span><span class="sh">embeddings only</span></div>
-  <div class="li"><span>Checkpointing</span><span class="sh">use_reentrant=False</span></div>
-  <div class="li"><span>Epochs</span><span class="sh">6, best is 5</span></div></div>
- <div><h3>Measured on test</h3>
-  <div class="li"><span>AUC, macro</span><span class="sh">0.9852</span></div>
-  <div class="li"><span>F1, macro</span><span class="sh">0.8814</span></div>
-  <div class="li"><span>Language bias, AUC gain</span><span class="sh">+0.0003, p = 0.588</span></div>
-  <div class="li"><span>So <code>lang_ids</code></span><span class="sh">can be left out</span></div></div>
-</div>
-
-</div></body></html>"""
+<style>body{{margin:20px;background:#fff}}svg{{font-family:'Space Grotesk',sans-serif;display:block;border:1px solid #D8DADD;background:#fff}}
+.m{{font-family:'Space Mono',monospace}}text.m[font-size="15"]{{font-size:13.5px;font-weight:700}}</style></head><body>
+<svg id="arch" xmlns="http://www.w3.org/2000/svg" width="1520" height="1024" viewBox="0 -24 1520 1024">
+<defs>
+ <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+  <rect width="6" height="6" fill="#FAFAF8"/><line x1="0" y1="0" x2="0" y2="6" stroke="#E3E5E8" stroke-width="2"/></pattern>
+ <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+ <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{TOXIC}"/></marker>
+</defs>
+{svg}
+</svg></body></html>"""
 
 (HERE / "architecture.html").write_text(page, encoding="utf-8")

@@ -157,7 +157,7 @@ evaluation flag: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ## How it works
 
-<img src="docs/images/architecture.png" alt="Mill in one forward pass, in five stages. 1: a comment is tokenised and paired with a language id. 2: XLM-RoBERTa-large, 24 trained layers over a frozen embedding table, gives hidden states of shape B, S, 1024. 3: one extra attention block adds a per-language bias, one value per key, to the attention scores before masking and softmax. 4: a classifier on the CLS row maps 1024 to 512 to 6. 5: six sigmoids give independent probabilities, each compared with its own threshold" width="100%">
+<img src="docs/images/architecture.png" alt="Block diagram of Mill. A comment is tokenised into input_ids and attention_mask. XLM-RoBERTa-large (frozen embedding, 24 trained layers) gives hidden states of shape B, S, 1024. In the head, q, k and v projections give content scores; a language bias from lang_ids through lang_embed and lang_proj is added to them; then padding mask, softmax, weighted sum with v and post_attention. The CLS row goes through a 1024 to 512 to 6 classifier and six independent sigmoids" width="100%">
 
 XLM-RoBERTa-large encodes the comment. One extra attention block adds a per-language bias to the
 attention scores, which varies along the key axis so softmax cannot cancel it

@@ -1,155 +1,262 @@
 <!doctype html><html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#fff;font-family:'Space Grotesk',sans-serif;color:#000;padding:20px;width:1640px}
-#arch{width:1600px;border:1px solid #D8DADD;padding:36px 40px 32px;background:#fff}
-.top{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px}
-.top h1{display:flex;align-items:center;gap:10px;font-size:30px;letter-spacing:-.5px}
-.top span{font-size:13px;color:#6B6F76}
-.flow{display:flex;align-items:stretch}
-.st{border-top:2px solid #000;padding-top:12px;flex:none}
-.st.lang{border-top-color:#E53935}
-.ar{flex:none;width:28px;display:flex;align-items:center;justify-content:center;color:#6B6F76;font-size:18px}
-.k{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#6B6F76}
-.k b{color:#000;margin-right:8px}
-h2{font-size:19px;font-weight:600;margin:6px 0 12px;line-height:1.2}
-.d{font-size:13px;line-height:1.5;color:#333}
-code{font-family:'Space Mono',monospace;font-size:12px}
-.sh{font-family:'Space Mono',monospace;font-size:12px;color:#6B6F76;white-space:nowrap}
-.li{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid #D8DADD;font-size:13px}
-.li:last-child{border-bottom:0}
-.li code{font-weight:700}
-.q{font-size:14px;font-weight:500;margin-bottom:10px}
-.tok{display:flex;gap:3px;margin:6px 0 4px}
-.tok i{width:16px;height:16px;border:1px solid #000}
-.tok i.cls{background:#000}
-.stack{display:flex;flex-direction:column-reverse;gap:3px;margin:4px 0 10px}
-.stack i{height:4px;background:#000}
-.stack i.frozen{height:10px;background:repeating-linear-gradient(135deg,#9A9DA3 0 2px,#fff 2px 5px);border:1px solid #9A9DA3}
-.core{display:grid;grid-template-columns:236px 174px 1fr;column-gap:22px}
-.sub{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
-.eq{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:4px}
-.red{color:#E53935}
-.grid{display:grid;grid-template-columns:repeat(8,20px);gap:2px}
-.grid i{height:20px}
-.axis{font-size:11px;color:#6B6F76;margin:2px 0 4px}
-.plus{font-size:20px;font-weight:500;margin:6px 0 2px 80px}
-.steps{counter-reset:s}
-.steps div{counter-increment:s;padding:7px 0 7px 26px;border-bottom:1px solid #D8DADD;font-size:13px;position:relative;line-height:1.35}
-.steps div:before{content:counter(s);position:absolute;left:0;font-family:'Space Mono',monospace;font-size:12px;color:#6B6F76}
-.steps div:last-child{border-bottom:0}
-.row{display:flex;align-items:center;gap:10px;height:24px;font-size:13px}
-.lab{width:88px;color:#333}
-.track{position:relative;flex:1;height:14px;border-bottom:1px solid #D8DADD}
-.track i{position:absolute;left:0;bottom:0;height:6px}
-.track b{position:absolute;top:0;bottom:-1px;width:1px;background:#000}
-.pct{width:34px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
-.foot{display:grid;grid-template-columns:1.25fr 1fr 1fr;column-gap:44px;margin-top:30px;padding-top:20px;border-top:1px solid #D8DADD}
-.foot h3{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#6B6F76;margin-bottom:10px}
-.pair{display:flex;gap:26px}
-.pair div{font-size:12.5px;line-height:1.45;color:#333;width:50%}
-.mini{display:grid;grid-template-columns:repeat(4,22px);gap:2px;margin-bottom:8px}
-.mini i{height:14px}
-.x{opacity:.35}
-</style></head><body><div id="arch">
-
-<div class="top"><h1><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>Mill, one forward pass</h1>
-<span><code>B</code> batch &nbsp;&middot;&nbsp; <code>S</code> tokens &nbsp;&middot;&nbsp; 16 heads of 64 dims &nbsp;&middot;&nbsp; 565M parameters</span></div>
-
-<div class="flow">
-
-<div class="st" style="width:192px">
- <div class="k"><b>01</b>Input</div><h2>A comment and its language</h2>
- <div class="q">Eres un completo idiota y nadie te quiere.</div>
- <div class="d">XLM-R SentencePiece tokens, at most 512. The black square is position 0, <code>[CLS]</code>.</div>
- <div class="tok"><i class="cls"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
- <div class="li"><code>input_ids</code><span class="sh">[B,S]</span></div>
- <div class="li"><code>attention_mask</code><span class="sh">[B,S]</span></div>
- <div class="li"><code class="red">lang_ids</code><span class="sh">[B] &nbsp;es = 3</span></div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st" style="width:168px">
- <div class="k"><b>02</b>Encoder</div><h2>XLM-RoBERTa-large</h2>
- <div class="stack"><i class=frozen></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
- <div class="d">24 transformer layers, all trained. The embedding table (hatched, 256M parameters) is frozen.</div>
- <div class="li" style="margin-top:8px"><span>output</span><span class="sh">[B,S,1024]</span></div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st lang" style="flex:1;min-width:0">
- <div class="k"><b>03</b>Language-conditioned attention</div><h2>One extra attention block, with a per-language bias on the scores</h2>
- <div class="core">
-  <div>
-   <div class="sub">Content</div>
-   <div class="li"><code>q_proj</code><span class="sh">1024&rarr;1024</span></div>
-   <div class="li"><code>k_proj</code><span class="sh">1024&rarr;1024</span></div>
-   <div class="li"><code>v_proj</code><span class="sh">1024&rarr;1024</span></div>
-   <div class="li"><span>split into heads</span><span class="sh">[B,16,S,64]</span></div>
-   <div class="sub red" style="margin-top:22px">Language</div>
-   <div class="li"><code class="red">lang_embed</code><span class="sh">Embedding(7, 64)</span></div>
-   <div class="li"><code class="red">lang_proj</code><span class="sh">64&rarr;1024</span></div>
-   <div class="li"><span>LayerNorm, Tanh</span><span class="sh">L [B,16,1,64]</span></div>
-  </div>
-  <div>
-   <div class="eq">q &middot; k<sup>T</sup> / &radic;64</div>
-   <div class="axis">keys &rarr; &nbsp; queries &darr;</div>
-   <div class="grid"><i style="background:rgb(148,148,148)"></i><i style="background:rgb(125,125,125)"></i><i style="background:rgb(237,237,237)"></i><i style="background:rgb(181,181,181)"></i><i style="background:rgb(170,170,170)"></i><i style="background:rgb(250,250,250)"></i><i style="background:rgb(152,152,152)"></i><i style="background:rgb(149,149,149)"></i><i style="background:rgb(60,60,60)"></i><i style="background:rgb(105,105,105)"></i><i style="background:rgb(132,132,132)"></i><i style="background:rgb(46,46,46)"></i><i style="background:rgb(137,137,137)"></i><i style="background:rgb(156,156,156)"></i><i style="background:rgb(100,100,100)"></i><i style="background:rgb(212,212,212)"></i><i style="background:rgb(157,157,157)"></i><i style="background:rgb(245,245,245)"></i><i style="background:rgb(164,164,164)"></i><i style="background:rgb(130,130,130)"></i><i style="background:rgb(194,194,194)"></i><i style="background:rgb(88,88,88)"></i><i style="background:rgb(88,88,88)"></i><i style="background:rgb(146,146,146)"></i><i style="background:rgb(125,125,125)"></i><i style="background:rgb(174,174,174)"></i><i style="background:rgb(104,104,104)"></i><i style="background:rgb(202,202,202)"></i><i style="background:rgb(216,216,216)"></i><i style="background:rgb(147,147,147)"></i><i style="background:rgb(238,238,238)"></i><i style="background:rgb(199,199,199)"></i><i style="background:rgb(187,187,187)"></i><i style="background:rgb(99,99,99)"></i><i style="background:rgb(70,70,70)"></i><i style="background:rgb(148,148,148)"></i><i style="background:rgb(64,64,64)"></i><i style="background:rgb(89,89,89)"></i><i style="background:rgb(172,172,172)"></i><i style="background:rgb(98,98,98)"></i><i style="background:rgb(232,232,232)"></i><i style="background:rgb(148,148,148)"></i><i style="background:rgb(224,224,224)"></i><i style="background:rgb(213,213,213)"></i><i style="background:rgb(119,119,119)"></i><i style="background:rgb(190,190,190)"></i><i style="background:rgb(138,138,138)"></i><i style="background:rgb(64,64,64)"></i><i style="background:rgb(80,80,80)"></i><i style="background:rgb(76,76,76)"></i><i style="background:rgb(179,179,179)"></i><i style="background:rgb(114,114,114)"></i><i style="background:rgb(150,150,150)"></i><i style="background:rgb(236,236,236)"></i><i style="background:rgb(153,153,153)"></i><i style="background:rgb(202,202,202)"></i><i style="background:rgb(115,115,115)"></i><i style="background:rgb(172,172,172)"></i><i style="background:rgb(150,150,150)"></i><i style="background:rgb(56,56,56)"></i><i style="background:rgb(136,136,136)"></i><i style="background:rgb(102,102,102)"></i><i style="background:rgb(51,51,51)"></i><i style="background:rgb(160,160,160)"></i></div>
-   <div class="sh" style="margin-top:5px">[B,16,S,S]</div>
-   <div class="plus">+</div>
-   <div class="eq red">L &middot; k<sup>T</sup> / &radic;64</div>
-   <div class="grid"><i style="background:rgba(229,57,53,0.25)"></i><i style="background:rgba(229,57,53,0.91)"></i><i style="background:rgba(229,57,53,0.43)"></i><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.16)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,0.56)"></i><i style="background:rgba(229,57,53,0.34)"></i></div>
-   <div class="sh" style="margin-top:5px">[B,16,1,S]</div>
-   <div class="d" style="margin-top:4px;font-size:12px">One value per key, added to every query row.</div>
-  </div>
-  <div class="steps">
-   <div>Mask padded keys to &minus;&infin;</div>
-   <div>Softmax along the key axis</div>
-   <div>Dropout on the weights</div>
-   <div>Weights &middot; <code>v</code>, merge heads</div>
-   <div>Linear, LayerNorm, GELU</div>
-   <div><span class="sh">[B,S,1024]</span></div>
-  </div>
- </div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st" style="width:176px">
- <div class="k"><b>04</b>Head</div><h2>Classifier on the <code style="font-size:16px">[CLS]</code> row</h2>
- <div class="tok"><i class="cls"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
- <div class="li"><span>row 0</span><span class="sh">[B,1024]</span></div>
- <div class="li"><span>Linear</span><span class="sh">1024&rarr;512</span></div>
- <div class="li"><span>LayerNorm, GELU</span><span class="sh">[B,512]</span></div>
- <div class="li"><span>Linear</span><span class="sh">512&rarr;6</span></div>
- <div class="li"><span>6 sigmoids</span><span class="sh">[B,6]</span></div>
-</div>
-<div class="ar">&rarr;</div>
-
-<div class="st" style="width:222px">
- <div class="k"><b>05</b>Output</div><h2>Six independent probabilities</h2>
- <div class="row"><span class="lab">Toxic</span><span class="track"><i style="width:98.7%;background:#E53935"></i><b style="left:47.2%"></b></span><span class="pct">98.7</span></div><div class="row"><span class="lab">Severe Toxic</span><span class="track"><i style="width:7.0%;background:#2E7D32"></i><b style="left:47.2%"></b></span><span class="pct">7.0</span></div><div class="row"><span class="lab">Obscene</span><span class="track"><i style="width:84.1%;background:#E53935"></i><b style="left:52.8%"></b></span><span class="pct">84.1</span></div><div class="row"><span class="lab">Threat</span><span class="track"><i style="width:2.7%;background:#2E7D32"></i><b style="left:52.8%"></b></span><span class="pct">2.7</span></div><div class="row"><span class="lab">Insult</span><span class="track"><i style="width:99.3%;background:#E53935"></i><b style="left:56.4%"></b></span><span class="pct">99.3</span></div><div class="row"><span class="lab">Identity Hate</span><span class="track"><i style="width:5.0%;background:#2E7D32"></i><b style="left:56.4%"></b></span><span class="pct">5.0</span></div>
- <div class="d" style="margin-top:10px;font-size:12px">No softmax across labels, so several can fire. A label fires when its probability reaches its own threshold (the tick), tuned on <code>val</code>.</div>
-</div>
-
-</div>
-
-<div class="foot">
- <div><h3>Why the bias runs along the keys</h3>
-  <div class="pair">
-   <div class="x"><span class="mini"><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,1.00)"></i></span>Constant along each row of keys. Softmax is shift-invariant, so it cancels exactly. This was the 2025 bug.</div>
-   <div><span class="mini"><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,0.47)"></i><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,0.47)"></i><i style="background:rgba(229,57,53,0.74)"></i><i style="background:rgba(229,57,53,0.30)"></i><i style="background:rgba(229,57,53,1.00)"></i><i style="background:rgba(229,57,53,0.47)"></i></span>Different for every key: <code>L&middot;k_j</code>. It survives softmax and reshapes what every query attends to.</div>
-  </div></div>
- <div><h3>Training</h3>
-  <div class="li"><span>Loss</span><span class="sh">weighted focal, per class</span></div>
-  <div class="li"><span>Frozen</span><span class="sh">embeddings only</span></div>
-  <div class="li"><span>Checkpointing</span><span class="sh">use_reentrant=False</span></div>
-  <div class="li"><span>Epochs</span><span class="sh">6, best is 5</span></div></div>
- <div><h3>Measured on test</h3>
-  <div class="li"><span>AUC, macro</span><span class="sh">0.9852</span></div>
-  <div class="li"><span>F1, macro</span><span class="sh">0.8814</span></div>
-  <div class="li"><span>Language bias, AUC gain</span><span class="sh">+0.0003, p = 0.588</span></div>
-  <div class="li"><span>So <code>lang_ids</code></span><span class="sh">can be left out</span></div></div>
-</div>
-
-</div></body></html>
+<style>body{margin:20px;background:#fff}svg{font-family:'Space Grotesk',sans-serif;display:block;border:1px solid #D8DADD;background:#fff}
+.m{font-family:'Space Mono',monospace}text.m[font-size="15"]{font-size:13.5px;font-weight:700}</style></head><body>
+<svg id="arch" xmlns="http://www.w3.org/2000/svg" width="1520" height="1024" viewBox="0 -24 1520 1024">
+<defs>
+ <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+  <rect width="6" height="6" fill="#FAFAF8"/><line x1="0" y1="0" x2="0" y2="6" stroke="#E3E5E8" stroke-width="2"/></pattern>
+ <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+ <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E53935"/></marker>
+</defs>
+<text x="40" y="62" font-size="30" font-weight="700" fill="#000000" text-anchor="start" class="" style="letter-spacing:-.5px">Mill, one forward pass</text>
+<text x="40" y="90" font-size="13" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">B batch  ·  S tokens  ·  16 heads of 64 dims  ·  565M parameters</text>
+<rect x="40" y="122" width="22" height="15" rx="3" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.2"/>
+<text x="72" y="134" font-size="13" font-weight="400" fill="#333" text-anchor="start" class="" style="">layer, trained</text>
+<rect x="40" y="148" width="22" height="15" rx="3" fill="url(#hatch)" stroke="#8E9299" stroke-width="1.2"/>
+<text x="72" y="160" font-size="13" font-weight="400" fill="#333" text-anchor="start" class="" style="">frozen</text>
+<rect x="40" y="174" width="22" height="15" rx="3" fill="#FFF4CC" stroke="#D2AE3A" stroke-width="1.2"/>
+<text x="72" y="186" font-size="13" font-weight="400" fill="#333" text-anchor="start" class="" style="">attention scores</text>
+<rect x="40" y="200" width="22" height="15" rx="3" fill="#FDE7E6" stroke="#E53935" stroke-width="1.2"/>
+<text x="72" y="212" font-size="13" font-weight="400" fill="#333" text-anchor="start" class="" style="">language path</text>
+<rect x="40" y="226" width="22" height="15" rx="3" fill="#E3F0E4" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="72" y="238" font-size="13" font-weight="400" fill="#333" text-anchor="start" class="" style="">classifier</text>
+<rect x="170" y="350" width="400" height="440" rx="10" fill="#F4F4F1" stroke="#D8DADD" stroke-width="1.2"/>
+<text x="552" y="378" font-size="14" font-weight="700" fill="#333" text-anchor="end" class="" style="">XLM-RoBERTa-large</text>
+<rect x="244" y="392" width="276" height="272" rx="8" fill="none" stroke="#9A9DA3" stroke-width="1.4" stroke-dasharray="2 4" stroke-linecap="round"/>
+<rect x="238" y="398" width="276" height="272" rx="8" fill="none" stroke="#9A9DA3" stroke-width="1.4" stroke-dasharray="2 4" stroke-linecap="round"/>
+<rect x="232" y="404" width="276" height="272" rx="8" fill="#F4F4F1" stroke="#6B6F76" stroke-width="1.4" stroke-dasharray="2 4" stroke-linecap="round"/>
+<text x="540" y="548" font-size="17" font-weight="600" fill="#000000" text-anchor="middle" class="" style="">×24</text>
+<rect x="260.0" y="614" width="220" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="633.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Multi-head self-attention</text>
+<text x="370" y="651.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">16 heads</text>
+<rect x="260.0" y="558" width="220" height="34" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="580.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Add &amp; LayerNorm</text>
+<rect x="260.0" y="486" width="220" height="48" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="507.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Feed-forward</text>
+<text x="370" y="525.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">1024 → 4096 → 1024</text>
+<rect x="260.0" y="428" width="220" height="34" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="450.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Add &amp; LayerNorm</text>
+<rect x="274.0" y="702" width="220" height="50" rx="5" fill="#FFFFFF" stroke="#8E9299" stroke-width="1.4"/>
+<rect x="267.0" y="709" width="220" height="50" rx="5" fill="#FFFFFF" stroke="#8E9299" stroke-width="1.4"/>
+<rect x="260.0" y="716" width="220" height="50" rx="5" fill="#FFFFFF" stroke="#8E9299" stroke-width="1.4"/>
+<rect x="260.0" y="716" width="220" height="50" rx="5" fill="url(#hatch)" stroke="#8E9299" stroke-width="1.4"/>
+<text x="370" y="738.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Embedding</text>
+<text x="370" y="756.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">frozen · 256M parameters</text>
+<rect x="281.0" y="255" width="220" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<rect x="274.0" y="262" width="220" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<rect x="267.0" y="269" width="220" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<rect x="260.0" y="276" width="220" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="303.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Enc. hidden states</text>
+<rect x="260.0" y="830" width="220" height="40" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="855.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">input_ids</text>
+<rect x="20.0" y="830" width="150" height="40" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="95" y="855.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">attention_mask</text>
+<rect x="220.0" y="900" width="300" height="40" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="370" y="925.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">XLM-R SentencePiece tokenizer</text>
+<text x="370" y="972" font-size="14" font-weight="500" fill="#333" text-anchor="middle" class="" style="">“Eres un completo idiota y nadie te quiere.”</text>
+<path d="M370,955 L370,942" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M370,900 L370,872" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M220,920 L95,920 L95,872" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M370,830 L370,768" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="380" y="806" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">[B,S]</text>
+<path d="M370,709 L370,678" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M370,614 L370,594" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M370,558 L370,536" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M370,486 L370,464" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M370,428 L370,322" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<path d="M95,830 L95,636 L258,636" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="105" y="628" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">[B,S]</text>
+<rect x="790" y="112" width="640" height="678" rx="10" fill="#F4F4F1" stroke="#D8DADD" stroke-width="1.2"/>
+<text x="1412" y="140" font-size="14" font-weight="700" fill="#333" text-anchor="end" class="" style="">Language-aware head</text>
+<path d="M501,291 L700,291 L700,812 L1010,812 L1010,768" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="710" y="520" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">[B,S,1024]</text>
+<rect x="899.0" y="702" width="250" height="50" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<rect x="892.0" y="709" width="250" height="50" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<rect x="885.0" y="716" width="250" height="50" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="1010" y="738.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">q, k, v projections</text>
+<text x="1010" y="756.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">3 × Linear 1024 → 1024</text>
+<path d="M1010,709 L1010,690" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<rect x="885" y="618" width="250" height="70" rx="5" fill="#FFF4CC" stroke="#D2AE3A" stroke-width="1.4"/>
+<rect x="910" y="622" width="49" height="49" rx="2" fill="#FFFFFF" stroke="#D2AE3A" stroke-width="1"/>
+<rect x="912" y="624" width="7.5" height="7.5" fill="rgb(150,142,118)"/>
+<rect x="921" y="624" width="7.5" height="7.5" fill="rgb(129,121,95)"/>
+<rect x="930" y="624" width="7.5" height="7.5" fill="rgb(233,228,207)"/>
+<rect x="939" y="624" width="7.5" height="7.5" fill="rgb(181,174,151)"/>
+<rect x="948" y="624" width="7.5" height="7.5" fill="rgb(171,164,140)"/>
+<rect x="912" y="633" width="7.5" height="7.5" fill="rgb(68,59,30)"/>
+<rect x="921" y="633" width="7.5" height="7.5" fill="rgb(111,102,75)"/>
+<rect x="930" y="633" width="7.5" height="7.5" fill="rgb(135,128,102)"/>
+<rect x="939" y="633" width="7.5" height="7.5" fill="rgb(56,46,16)"/>
+<rect x="948" y="633" width="7.5" height="7.5" fill="rgb(141,133,107)"/>
+<rect x="912" y="642" width="7.5" height="7.5" fill="rgb(159,152,127)"/>
+<rect x="921" y="642" width="7.5" height="7.5" fill="rgb(241,236,215)"/>
+<rect x="930" y="642" width="7.5" height="7.5" fill="rgb(165,158,134)"/>
+<rect x="939" y="642" width="7.5" height="7.5" fill="rgb(134,126,100)"/>
+<rect x="948" y="642" width="7.5" height="7.5" fill="rgb(193,187,164)"/>
+<rect x="912" y="651" width="7.5" height="7.5" fill="rgb(129,121,95)"/>
+<rect x="921" y="651" width="7.5" height="7.5" fill="rgb(175,168,144)"/>
+<rect x="930" y="651" width="7.5" height="7.5" fill="rgb(110,101,74)"/>
+<rect x="939" y="651" width="7.5" height="7.5" fill="rgb(200,194,172)"/>
+<rect x="948" y="651" width="7.5" height="7.5" fill="rgb(214,208,186)"/>
+<rect x="912" y="660" width="7.5" height="7.5" fill="rgb(186,180,157)"/>
+<rect x="921" y="660" width="7.5" height="7.5" fill="rgb(105,97,69)"/>
+<rect x="930" y="660" width="7.5" height="7.5" fill="rgb(78,69,40)"/>
+<rect x="939" y="660" width="7.5" height="7.5" fill="rgb(151,143,118)"/>
+<rect x="948" y="660" width="7.5" height="7.5" fill="rgb(72,63,34)"/>
+<rect x="904" y="627" width="49" height="49" rx="2" fill="#FFFFFF" stroke="#D2AE3A" stroke-width="1"/>
+<rect x="906" y="629" width="7.5" height="7.5" fill="rgb(150,142,118)"/>
+<rect x="915" y="629" width="7.5" height="7.5" fill="rgb(129,121,95)"/>
+<rect x="924" y="629" width="7.5" height="7.5" fill="rgb(233,228,207)"/>
+<rect x="933" y="629" width="7.5" height="7.5" fill="rgb(181,174,151)"/>
+<rect x="942" y="629" width="7.5" height="7.5" fill="rgb(171,164,140)"/>
+<rect x="906" y="638" width="7.5" height="7.5" fill="rgb(68,59,30)"/>
+<rect x="915" y="638" width="7.5" height="7.5" fill="rgb(111,102,75)"/>
+<rect x="924" y="638" width="7.5" height="7.5" fill="rgb(135,128,102)"/>
+<rect x="933" y="638" width="7.5" height="7.5" fill="rgb(56,46,16)"/>
+<rect x="942" y="638" width="7.5" height="7.5" fill="rgb(141,133,107)"/>
+<rect x="906" y="647" width="7.5" height="7.5" fill="rgb(159,152,127)"/>
+<rect x="915" y="647" width="7.5" height="7.5" fill="rgb(241,236,215)"/>
+<rect x="924" y="647" width="7.5" height="7.5" fill="rgb(165,158,134)"/>
+<rect x="933" y="647" width="7.5" height="7.5" fill="rgb(134,126,100)"/>
+<rect x="942" y="647" width="7.5" height="7.5" fill="rgb(193,187,164)"/>
+<rect x="906" y="656" width="7.5" height="7.5" fill="rgb(129,121,95)"/>
+<rect x="915" y="656" width="7.5" height="7.5" fill="rgb(175,168,144)"/>
+<rect x="924" y="656" width="7.5" height="7.5" fill="rgb(110,101,74)"/>
+<rect x="933" y="656" width="7.5" height="7.5" fill="rgb(200,194,172)"/>
+<rect x="942" y="656" width="7.5" height="7.5" fill="rgb(214,208,186)"/>
+<rect x="906" y="665" width="7.5" height="7.5" fill="rgb(186,180,157)"/>
+<rect x="915" y="665" width="7.5" height="7.5" fill="rgb(105,97,69)"/>
+<rect x="924" y="665" width="7.5" height="7.5" fill="rgb(78,69,40)"/>
+<rect x="933" y="665" width="7.5" height="7.5" fill="rgb(151,143,118)"/>
+<rect x="942" y="665" width="7.5" height="7.5" fill="rgb(72,63,34)"/>
+<rect x="898" y="632" width="49" height="49" rx="2" fill="#FFFFFF" stroke="#D2AE3A" stroke-width="1"/>
+<rect x="900" y="634" width="7.5" height="7.5" fill="rgb(150,142,118)"/>
+<rect x="909" y="634" width="7.5" height="7.5" fill="rgb(129,121,95)"/>
+<rect x="918" y="634" width="7.5" height="7.5" fill="rgb(233,228,207)"/>
+<rect x="927" y="634" width="7.5" height="7.5" fill="rgb(181,174,151)"/>
+<rect x="936" y="634" width="7.5" height="7.5" fill="rgb(171,164,140)"/>
+<rect x="900" y="643" width="7.5" height="7.5" fill="rgb(68,59,30)"/>
+<rect x="909" y="643" width="7.5" height="7.5" fill="rgb(111,102,75)"/>
+<rect x="918" y="643" width="7.5" height="7.5" fill="rgb(135,128,102)"/>
+<rect x="927" y="643" width="7.5" height="7.5" fill="rgb(56,46,16)"/>
+<rect x="936" y="643" width="7.5" height="7.5" fill="rgb(141,133,107)"/>
+<rect x="900" y="652" width="7.5" height="7.5" fill="rgb(159,152,127)"/>
+<rect x="909" y="652" width="7.5" height="7.5" fill="rgb(241,236,215)"/>
+<rect x="918" y="652" width="7.5" height="7.5" fill="rgb(165,158,134)"/>
+<rect x="927" y="652" width="7.5" height="7.5" fill="rgb(134,126,100)"/>
+<rect x="936" y="652" width="7.5" height="7.5" fill="rgb(193,187,164)"/>
+<rect x="900" y="661" width="7.5" height="7.5" fill="rgb(129,121,95)"/>
+<rect x="909" y="661" width="7.5" height="7.5" fill="rgb(175,168,144)"/>
+<rect x="918" y="661" width="7.5" height="7.5" fill="rgb(110,101,74)"/>
+<rect x="927" y="661" width="7.5" height="7.5" fill="rgb(200,194,172)"/>
+<rect x="936" y="661" width="7.5" height="7.5" fill="rgb(214,208,186)"/>
+<rect x="900" y="670" width="7.5" height="7.5" fill="rgb(186,180,157)"/>
+<rect x="909" y="670" width="7.5" height="7.5" fill="rgb(105,97,69)"/>
+<rect x="918" y="670" width="7.5" height="7.5" fill="rgb(78,69,40)"/>
+<rect x="927" y="670" width="7.5" height="7.5" fill="rgb(151,143,118)"/>
+<rect x="936" y="670" width="7.5" height="7.5" fill="rgb(72,63,34)"/>
+<text x="1044" y="648" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">content scores</text>
+<text x="1044" y="667" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">q·kᵀ / √64   [B,16,S,S]</text>
+<path d="M1010,618 L1010,592" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<circle cx="1010" cy="577" r="14" fill="#fff" stroke="#E53935" stroke-width="1.6"/>
+<text x="1010" y="584" font-size="20" font-weight="600" fill="#E53935" text-anchor="middle" class="" style="">+</text>
+<path d="M1010,563 L1010,538" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<rect x="885.0" y="494" width="250" height="42" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="1010" y="520.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Mask padded keys to −∞</text>
+<path d="M1010,494 L1010,476" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<rect x="885.0" y="430" width="250" height="44" rx="5" fill="#FFF4CC" stroke="#D2AE3A" stroke-width="1.4"/>
+<text x="1010" y="449.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Softmax over keys</text>
+<text x="1010" y="467.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">then dropout</text>
+<path d="M1010,430 L1010,412" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<rect x="885.0" y="366" width="250" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="1010" y="393.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">Weights · v, merge heads</text>
+<path d="M1010,366 L1010,348" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<rect x="885.0" y="296" width="250" height="50" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<text x="1010" y="318.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">post_attention</text>
+<text x="1010" y="336.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">Linear · LayerNorm · GELU</text>
+<path d="M1010,296 L1010,278" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="1020" y="290" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">[B,S,1024]</text>
+<rect x="885" y="232" width="250" height="44" rx="5" fill="#FAFAF8" stroke="#B4B7BD" stroke-width="1.4"/>
+<rect x="900" y="246" width="10" height="16" fill="#000000" stroke="#000000" stroke-width="1"/>
+<rect x="913" y="246" width="10" height="16" fill="#fff" stroke="#000000" stroke-width="1"/>
+<rect x="926" y="246" width="10" height="16" fill="#fff" stroke="#000000" stroke-width="1"/>
+<rect x="939" y="246" width="10" height="16" fill="#fff" stroke="#000000" stroke-width="1"/>
+<rect x="952" y="246" width="10" height="16" fill="#fff" stroke="#000000" stroke-width="1"/>
+<rect x="965" y="246" width="10" height="16" fill="#fff" stroke="#000000" stroke-width="1"/>
+<rect x="978" y="246" width="10" height="16" fill="#fff" stroke="#000000" stroke-width="1"/>
+<text x="1062" y="259" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">keep the [CLS] row</text>
+<path d="M1010,232 L1010,214" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="1020" y="226" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">[B,1024]</text>
+<rect x="885.0" y="162" width="250" height="50" rx="5" fill="#E3F0E4" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="1010" y="184.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">classifier</text>
+<text x="1010" y="202.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">1024 → 512 → 6</text>
+<path d="M1010,162 L1010,92" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="1020" y="132" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">6 logits  [B,6]</text>
+<path d="M885,741 L845,741 L845,388 L883,388" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="837" y="560" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="end" class="m" style="">v</text>
+<rect x="1178" y="540" width="236" height="240" rx="8" fill="none" stroke="#E53935" stroke-width="1.4" stroke-dasharray="2 4" stroke-linecap="round"/>
+<text x="1404" y="532" font-size="12" font-weight="600" fill="#E53935" text-anchor="end" class="" style="">language conditioning</text>
+<rect x="1200.0" y="716" width="200" height="50" rx="5" fill="#FDE7E6" stroke="#E53935" stroke-width="1.4"/>
+<text x="1300" y="738.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">lang_embed</text>
+<text x="1300" y="756.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">Embedding(7, 64)</text>
+<rect x="1200.0" y="640" width="200" height="50" rx="5" fill="#FDE7E6" stroke="#E53935" stroke-width="1.4"/>
+<text x="1300" y="662.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">lang_proj</text>
+<text x="1300" y="680.0" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">Linear 64 → 1024, Tanh</text>
+<rect x="1192" y="554" width="210" height="46" rx="5" fill="#FDE7E6" stroke="#E53935" stroke-width="1.4"/>
+<rect x="1204" y="571" width="10.5" height="10.5" fill="rgba(229,57,53,0.28)"/>
+<rect x="1216" y="571" width="10.5" height="10.5" fill="rgba(229,57,53,0.92)"/>
+<rect x="1228" y="571" width="10.5" height="10.5" fill="rgba(229,57,53,0.45)"/>
+<rect x="1240" y="571" width="10.5" height="10.5" fill="rgba(229,57,53,0.74)"/>
+<rect x="1252" y="571" width="10.5" height="10.5" fill="rgba(229,57,53,0.19)"/>
+<text x="1336" y="573" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">language bias</text>
+<text x="1336" y="591" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">L·kᵀ / √64</text>
+<rect x="1200.0" y="830" width="200" height="40" rx="5" fill="#FDE7E6" stroke="#E53935" stroke-width="1.4"/>
+<text x="1300" y="855.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="m" style="">lang_ids</text>
+<text x="1300" y="890" font-size="11.5" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">en 0 · ru 1 · tr 2 · es 3 · fr 4 · it 5 · pt 6</text>
+<path d="M1300,830 L1300,768" fill="none" stroke="#E53935" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ar)"/>
+<text x="1310" y="806" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">[B]</text>
+<path d="M1300,716 L1300,692" fill="none" stroke="#E53935" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ar)"/>
+<path d="M1300,640 L1300,602" fill="none" stroke="#E53935" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ar)"/>
+<text x="1310" y="626" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="start" class="m" style="">L [B,16,1,64]</text>
+<path d="M1192,577 L1026,577" fill="none" stroke="#E53935" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ar)"/>
+<text x="1108" y="568" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="middle" class="m" style="">[B,16,1,S]</text>
+<path d="M1135,741 L1162,741 L1162,590 L1190,590" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="1154" y="668" font-size="12" font-weight="400" fill="#6B6F76" text-anchor="end" class="m" style="">k</text>
+<rect x="906.0" y="25" width="250" height="44" rx="5" fill="#E3F0E4" stroke="#2E7D32" stroke-width="1.4"/>
+<rect x="899.0" y="32" width="250" height="44" rx="5" fill="#E3F0E4" stroke="#2E7D32" stroke-width="1.4"/>
+<rect x="892.0" y="39" width="250" height="44" rx="5" fill="#E3F0E4" stroke="#2E7D32" stroke-width="1.4"/>
+<rect x="885.0" y="46" width="250" height="44" rx="5" fill="#E3F0E4" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="1010" y="73.0" font-size="15" font-weight="500" fill="#000000" text-anchor="middle" class="" style="">6 independent sigmoids</text>
+<path d="M1156,54 L1206,54" fill="none" stroke="#333" stroke-width="1.6" stroke-linejoin="round" marker-end="url(#ak)"/>
+<text x="1216" y="24" font-size="11.5" font-weight="400" fill="#333" text-anchor="start" class="" style="">Toxic</text>
+<line x1="1308" y1="25" x2="1448" y2="25" stroke="#D8DADD"/>
+<rect x="1308" y="20" width="138.2" height="5" fill="#E53935"/>
+<line x1="1374.1" y1="15" x2="1374.1" y2="26" stroke="#000"/>
+<text x="1488" y="24" font-size="11.5" font-weight="600" fill="#000000" text-anchor="end" class="" style="">98.7</text>
+<text x="1216" y="39" font-size="11.5" font-weight="400" fill="#333" text-anchor="start" class="" style="">Severe Toxic</text>
+<line x1="1308" y1="40" x2="1448" y2="40" stroke="#D8DADD"/>
+<rect x="1308" y="35" width="9.8" height="5" fill="#2E7D32"/>
+<line x1="1374.1" y1="30" x2="1374.1" y2="41" stroke="#000"/>
+<text x="1488" y="39" font-size="11.5" font-weight="600" fill="#000000" text-anchor="end" class="" style="">7.0</text>
+<text x="1216" y="54" font-size="11.5" font-weight="400" fill="#333" text-anchor="start" class="" style="">Obscene</text>
+<line x1="1308" y1="55" x2="1448" y2="55" stroke="#D8DADD"/>
+<rect x="1308" y="50" width="117.7" height="5" fill="#E53935"/>
+<line x1="1381.9" y1="45" x2="1381.9" y2="56" stroke="#000"/>
+<text x="1488" y="54" font-size="11.5" font-weight="600" fill="#000000" text-anchor="end" class="" style="">84.1</text>
+<text x="1216" y="69" font-size="11.5" font-weight="400" fill="#333" text-anchor="start" class="" style="">Threat</text>
+<line x1="1308" y1="70" x2="1448" y2="70" stroke="#D8DADD"/>
+<rect x="1308" y="65" width="3.8" height="5" fill="#2E7D32"/>
+<line x1="1381.9" y1="60" x2="1381.9" y2="71" stroke="#000"/>
+<text x="1488" y="69" font-size="11.5" font-weight="600" fill="#000000" text-anchor="end" class="" style="">2.7</text>
+<text x="1216" y="84" font-size="11.5" font-weight="400" fill="#333" text-anchor="start" class="" style="">Insult</text>
+<line x1="1308" y1="85" x2="1448" y2="85" stroke="#D8DADD"/>
+<rect x="1308" y="80" width="139.0" height="5" fill="#E53935"/>
+<line x1="1387.0" y1="75" x2="1387.0" y2="86" stroke="#000"/>
+<text x="1488" y="84" font-size="11.5" font-weight="600" fill="#000000" text-anchor="end" class="" style="">99.3</text>
+<text x="1216" y="99" font-size="11.5" font-weight="400" fill="#333" text-anchor="start" class="" style="">Identity Hate</text>
+<line x1="1308" y1="100" x2="1448" y2="100" stroke="#D8DADD"/>
+<rect x="1308" y="95" width="7.0" height="5" fill="#2E7D32"/>
+<line x1="1387.0" y1="90" x2="1387.0" y2="101" stroke="#000"/>
+<text x="1488" y="99" font-size="11.5" font-weight="600" fill="#000000" text-anchor="end" class="" style="">5.0</text>
+</svg></body></html>
