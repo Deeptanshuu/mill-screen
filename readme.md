@@ -52,35 +52,39 @@ from huggingface_hub import hf_hub_download
 from transformers import AutoModel, AutoTokenizer
 
 REPO = "Deeptanshuu/mill-screen"
-LANGUAGE_IDS = {"en": 0, "ru": 1, "tr": 2, "es": 3, "fr": 4, "it": 5, "pt": 6}
 LABELS = ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
 
+# 1. Load the model, its tokenizer and the per-label thresholds
 model = AutoModel.from_pretrained(REPO, trust_remote_code=True).eval()
 tokenizer = AutoTokenizer.from_pretrained(REPO)
-with open(hf_hub_download(REPO, "thresholds.json")) as f:
-    thresholds = json.load(f)["thresholds"]
-cut = torch.tensor([thresholds[name] for name in LABELS])
+thresholds = json.load(open(hf_hub_download(REPO, "thresholds.json")))["thresholds"]
 
-texts = ["Eres un completo idiota y nadie te quiere.", "I know where you live and I will find you."]
-langs = ["es", "en"]
-enc = tokenizer(texts, padding=True, truncation=True, max_length=512, return_tensors="pt")
+# 2. Score a comment. lang_ids: en 0, ru 1, tr 2, es 3, fr 4, it 5, pt 6
+text = "Eres un completo idiota y nadie te quiere."
+inputs = tokenizer(text, truncation=True, max_length=512, return_tensors="pt")
 with torch.no_grad():
-    probs = model(**enc, lang_ids=torch.tensor([LANGUAGE_IDS[l] for l in langs]))["probabilities"]
+    probs = model(**inputs, lang_ids=torch.tensor([3]))["probabilities"][0]
 
-for text, row in zip(texts, probs):
-    print(text, "->", [n for n, p, t in zip(LABELS, row, cut) if p >= t] or ["clean"])
+# 3. A label fires when its probability reaches its threshold
+for label, p in zip(LABELS, probs.tolist()):
+    print(f"{label:14} {p:.2f}  {'yes' if p >= thresholds[label] else 'no'}")
 ```
 
 ```
-Eres un completo idiota y nadie te quiere. -> ['toxic', 'obscene', 'insult']
-I know where you live and I will find you. -> ['threat']
+toxic          0.99  yes
+severe_toxic   0.07  no
+obscene        0.84  yes
+threat         0.03  no
+insult         0.99  yes
+identity_hate  0.05  no
 ```
 
 | Detail | What to know |
 |---|---|
 | `lang_ids` | One integer per row. Leave it out and every row is scored as English; the [ablation](experiments/ablation_language_conditioning.md) found no measurable cost to that |
 | Thresholds | Do not use 0.5. `thresholds.json` has one cut per class, 0.47 to 0.56 |
-| `trust_remote_code` | Runs `modeling_toxic_xlmr.py` from the model repo. [`hf_release/inference_example.py`](hf_release/inference_example.py) is a batched version |
+| `trust_remote_code` | Runs `modeling_toxic_xlmr.py` from the model repo |
+| Many comments | [`hf_release/inference_example.py`](hf_release/inference_example.py) scores a batch with mixed languages |
 
 ## Results
 
