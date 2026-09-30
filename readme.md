@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/images/banner.png" alt="Mill: a fast, single-pass model for multilingual toxicity. Two result cards from the demo: a Spanish insult flagged toxic, insult and obscene, and a French thank-you scored non-toxic" width="100%">
+<img src="docs/images/banner.png" alt="Mill: a fast, single-pass model for multilingual toxicity. Two scored examples: a Spanish insult flagged insult, toxic and obscene, and a French thank-you scored non-toxic" width="100%">
 
 <br>
 <br>

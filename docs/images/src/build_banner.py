@@ -1,7 +1,7 @@
 """Build banner.html from real model output in predictions.jsonl.
 
 The banner uses the Streamlit demo's own design (streamlit_app.py THEME,
-Space Grotesk, the shield-plus icon, the result cards). predictions.jsonl is
+Space Grotesk, the shield-plus icon). predictions.jsonl is
 the output of OptimizedToxicityClassifier.predict on the v2 checkpoint with the
 per-class thresholds; no number on the cards is typed in by hand.
 
@@ -17,7 +17,7 @@ HERE = pathlib.Path(__file__).parent
 rows = [json.loads(line) for line in open(HERE / "predictions.jsonl", encoding="utf-8")]
 
 # streamlit_app.py THEME
-TOXIC, NON_TOXIC, TEXT, BUTTON, INPUT_BG = "#E53935", "#2E7D32", "#000000", "#000000", "#F8F9FA"
+TOXIC, NON_TOXIC, TEXT = "#E53935", "#2E7D32", "#000000"
 
 LABELS = [("toxic", "Toxic"), ("severe_toxic", "Severe Toxic"), ("obscene", "Obscene"),
           ("threat", "Threat"), ("insult", "Insult"), ("identity_hate", "Identity Hate")]
@@ -40,13 +40,13 @@ def card(r, top):
         p = r["p"][k]
         c = TOXIC if p >= CUT[k] else NON_TOXIC
         bars.append(f'<div class="row"><span class="lab">{name}</span>'
-                    f'<span class="track"><i style="width:{max(p * 100, 1.2):.1f}%;background:{c}"></i></span>'
-                    f'<span class="pct">{p * 100:.1f}%</span></div>')
-    badge = "TOXIC" if hit else "NON-TOXIC"
-    return f"""<div class="card" style="top:{top}px;border-left-color:{color}">
-  <div class="q">&ldquo;{html.escape(r['text'])}&rdquo;</div>
-  <div class="hd"><span class="lang">{FLAG[r['lang']]} (detected)</span>
-   <span class="badge" style="color:{color};background:{color}1A">{badge}</span></div>
+                    f'<span class="track"><i style="width:{max(p * 100, 0.6):.1f}%;background:{c}"></i>'
+                    f'<b style="left:{CUT[k] * 100:.1f}%"></b></span>'
+                    f'<span class="pct">{p * 100:.1f}</span></div>')
+    verdict = "toxic" if hit else "non-toxic"
+    return f"""<div class="ex" style="top:{top}px">
+  <div class="hd"><span>{FLAG[r['lang']]}</span><span style="color:{color}">{verdict}</span></div>
+  <div class="q">{html.escape(r['text'])}</div>
   {''.join(bars[:3])}
 </div>"""
 
@@ -59,33 +59,33 @@ page = f"""<!doctype html><html><head><meta charset="utf-8">
 <style>
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{width:1280px;height:400px;background:transparent;font-family:'Space Grotesk',sans-serif;color:{TEXT}}}
-.b{{position:relative;width:1280px;height:400px;border-radius:16px;overflow:hidden;background:#FFFFFF;border:1px solid #E6E8EB}}
-.l{{position:absolute;left:64px;top:70px}}
+.b{{position:relative;width:1280px;height:400px;overflow:hidden;background:#FFFFFF;border:1px solid #D8DADD}}
+.l{{position:absolute;left:64px;top:92px}}
 h1{{display:flex;align-items:center;gap:18px;font-size:92px;font-weight:700;letter-spacing:-2px;line-height:1}}
 h1 svg{{flex:none;margin-top:6px}}
-p{{margin-top:22px;font-size:22px;color:#333}}
-.chips{{margin-top:34px;display:flex;gap:10px;align-items:center}}
-.chip{{border:1px solid #D9DCE1;background:{INPUT_BG};border-radius:999px;padding:8px 16px;font-size:15px;font-weight:500}}
-.btn{{background:{BUTTON};color:#fff;border-radius:8px;padding:10px 20px;font-size:15px;font-weight:500}}
-.r{{position:absolute;left:690px;top:0;width:590px;height:400px;background:{INPUT_BG};border-left:1px solid #EEF0F2}}
-.card{{position:absolute;left:44px;width:500px;background:#fff;border-radius:10px;border-left:4px solid;
- box-shadow:0 2px 8px rgba(0,0,0,.10);padding:16px 22px 14px}}
-.q{{font-size:15px;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
-.hd{{display:flex;align-items:center;justify-content:space-between;margin:9px 0 10px}}
-.lang{{font-size:13px;color:#555}}
-.badge{{font-size:13px;font-weight:700;border-radius:6px;padding:3px 9px;letter-spacing:.3px}}
-.row{{display:flex;align-items:center;gap:12px;margin-top:6px;font-size:13px}}
-.lab{{width:92px;text-align:right;font-weight:600}}
-.track{{flex:1;height:12px;background:#F0F1F3;border-radius:3px;overflow:hidden}}
-.track i{{display:block;height:100%}}
-.pct{{width:48px;font-weight:700}}
+p{{margin-top:22px;font-size:22px;color:#222}}
+.meta{{margin-top:14px;font-size:15px;color:#6B6F76}}
+.r{{position:absolute;left:700px;top:0;width:580px;height:400px;border-left:1px solid #D8DADD}}
+.ex{{position:absolute;left:48px;width:484px}}
+.hd{{display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:1.2px;
+ text-transform:uppercase;color:#6B6F76}}
+.q{{margin:7px 0 14px;font-size:19px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.row{{display:flex;align-items:center;gap:14px;height:22px;font-size:13px}}
+.lab{{width:96px;color:#333}}
+.track{{position:relative;flex:1;height:14px;border-bottom:1px solid #D8DADD}}
+.track i{{position:absolute;left:0;bottom:0;height:6px}}
+.track b{{position:absolute;top:0;bottom:-1px;width:1px;background:#000}}
+.pct{{width:36px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}}
+.rule{{position:absolute;left:48px;width:484px;top:196px;border-top:1px solid #D8DADD}}
+.note{{position:absolute;right:48px;bottom:16px;font-size:11px;color:#6B6F76}}
 </style></head><body><div class="b">
 <div class="l">
  <h1>{SHIELD.format(s=78)}Mill</h1>
  <p>A fast, single-pass model for multilingual toxicity</p>
- <div class="chips"><span class="chip">7 languages</span><span class="chip">6 labels</span><span class="chip">XLM-RoBERTa-large</span></div>
+ <div class="meta">7 languages &nbsp;/&nbsp; 6 labels &nbsp;/&nbsp; XLM-RoBERTa-large</div>
 </div>
-<div class="r">{card(es, 34)}{card(fr, 214)}</div>
+<div class="r">{card(es, 44)}<div class="rule"></div>{card(fr, 218)}
+ <div class="note">probability, % &nbsp;&middot;&nbsp; tick marks the label's threshold</div></div>
 </div></body></html>"""
 
 (HERE / "banner.html").write_text(page, encoding="utf-8")
