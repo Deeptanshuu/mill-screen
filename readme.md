@@ -114,11 +114,6 @@ Mill is the most accurate, at the speed of other XLM-R-large models (a third of 
 throughput). 89% of English test rows are in Jigsaw data the Detoxify models trained on; removing
 them keeps every gap. Mill trained on this test set's distribution; the baselines did not.
 
-**Every language improved over v1**, and the gap between the best and worst narrowed from 0.052 to
-0.018 AUC. The rare classes gained most: `identity_hate` and `threat` roughly doubled in F1.
-
-<img src="docs/images/per_language_performance.png" alt="Per-language AUC and F1, v1 against v2, for all seven languages" width="100%">
-
 > **Known bias.** Short, benign self-descriptions that name an identity are over-flagged as toxic.
 > Read [experiments/identity_bias.md](experiments/identity_bias.md) before deploying.
 
