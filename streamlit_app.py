@@ -1384,7 +1384,7 @@ if analyze_button or (text_input and 'last_analyzed' not in st.session_state or 
                     
                     # Update layout
                     fig.update_layout(
-                        title=None,
+                        title=dict(text=""),  # title=None renders as "undefined" under plotly 6
                         xaxis_title="Probability (%)",
                         yaxis_title=None,  # Remove y-axis title to save space
                         height=340,  # Significantly increased height
